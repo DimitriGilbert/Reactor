@@ -51,6 +51,14 @@ class Reactor
 			}
 		}
 
+		$class = $this->getClass();
+		$this->command = new $class($this->args, $this->opts, $this->flags);
+
+		return true;
+	}
+
+	public function getClass()
+	{
 		if (class_exists('D2G\\Reactor\\'.$this->_command))
 		{
 			$class = 'D2G\\Reactor\\'.$this->_command;
@@ -68,9 +76,8 @@ class Reactor
 			// die($this->_command);
 			return false;
 		}
-		$this->command = new $class($this->args, $this->opts, $this->flags);
 
-		return true;
+		return $class;
 	}
 
 	public function ignite()
