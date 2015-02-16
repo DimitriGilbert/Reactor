@@ -1,0 +1,13 @@
+{
+    "name": "D2G/reactor",
+    "description": "",
+    "require": {
+        "php": ">=5.3.3",
+        "league/climate": "~2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "D2G\\Reactor\\": "src/"
+        }
+    }
+}
