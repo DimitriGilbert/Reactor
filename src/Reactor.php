@@ -33,13 +33,17 @@ class Reactor
 			{
 				$arg = preg_replace('#--#', '', $arg);
 				$arg = preg_split('#=#', $arg);
-				// die(print_r($arg, 1));
 				$this->opts[$arg[0]] = true;
 
 				if (count($arg) > 1)
 				{
 					$this->opts[$arg[0]] = $arg[1];
 				}
+			}
+			elseif (preg_match('#-#', $arg))
+			{
+				$arg = preg_replace('#-#', '', $arg);
+				$this->flags[$arg] = true;
 			}
 			else
 			{
@@ -61,7 +65,7 @@ class Reactor
 		}
 		else
 		{
-			die($this->_command);
+			// die($this->_command);
 			return false;
 		}
 		$this->command = new $class($this->args, $this->opts, $this->flags);

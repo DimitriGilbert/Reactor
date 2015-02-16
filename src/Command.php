@@ -50,6 +50,15 @@ class Command
 		return $default;
 	}
 
+	public function getFlag($index, $default = false)
+	{
+		if (isset($this->flags[$index]))
+		{
+			return true;
+		}
+		return $default;
+	}
+
 	public function hasExpected($function)
 	{
 		$checker = $this->commands[$function];

@@ -71,8 +71,7 @@ class Demo extends \D2G\Reactor\Command
 namespace '.$this->getOpt('namespace').';
 
 class '.ucfirst($name).' extends \D2G\Reactor\Reactor
-{
-';
+{';
 		if (!is_null($this->getOpt('methods')))
 		{
 			$methods = preg_split('#,#', $this->getOpt('methods'));
