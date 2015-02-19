@@ -90,4 +90,27 @@ class '.ucfirst($name).' extends \D2G\Reactor\Reactor
 }';
 		file_put_contents($file, $str);
 	}
+
+	public function execute()
+	{
+		$this->cli->out('basic command...');
+		$this->cli->out('args : '.print_r($this->args, 1));
+		$this->cli->out('opts : '.print_r($this->opts, 1));
+		$this->cli->out('flags : '.print_r($this->flags, 1));
+	}
+
+	public function callback()
+	{
+		$this->cli->out('basic command callback...');
+		$this->cli->out('args : '.print_r($this->args, 1));
+		$this->cli->out('opts : '.print_r($this->opts, 1));
+		$this->cli->out('flags : '.print_r($this->flags, 1));
+	}
+
+	public function hello()
+	{
+		$name = $this->getArg(0, 'world');
+		$this->__out('hello '.$name);
+		$this->__verbose('i am '.$this->name);
+	}
 }

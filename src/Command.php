@@ -20,13 +20,7 @@ class Command
 		$this->flags = $flags;
 		$this->command = null;
 		$this->commands = array(
-			'__DEFAULT__'=>'__help',
-			'execute'=>array(
-				'expecting'=>null,
-			),
-			'callback'=>array(
-				'expecting'=>null,
-			)
+			'__DEFAULT__'=>'__help'
 		);
 
 		$this->cli = new \League\CLImate\CLImate;
@@ -226,9 +220,22 @@ class Command
 		}
 	}
 
+	public function __out($str)
+	{
+		if (!$this->getFlag('q'))
+		{
+			$this->cli->out($str);
+		}
+	}
+
 	public function __verbose($str)
 	{
-		if ($this->getFlag('v') or $this->getFlag('verbose') or $this->getFlag('vv'))
+		if (
+			$this->getFlag('v')
+			or $this->getFlag('verbose')
+			or $this->getFlag('vv')
+			or $this->getFlag('debug')
+		)
 		{
 			$this->cli->out($str);
 		}
@@ -236,25 +243,17 @@ class Command
 
 	public function __verbose2($str)
 	{
-		if ($this->getFlag('vv'))
+		if ($this->getFlag('vv') or $this->getFlag('debug'))
 		{
 			$this->cli->out($str);
 		}
 	}
 
-	public function execute()
+	public function __debug($str)
 	{
-		$this->cli->out('basic command...');
-		$this->cli->out('args : '.print_r($this->args, 1));
-		$this->cli->out('opts : '.print_r($this->opts, 1));
-		$this->cli->out('flags : '.print_r($this->flags, 1));
-	}
-
-	public function callback()
-	{
-		$this->cli->out('basic command callback...');
-		$this->cli->out('args : '.print_r($this->args, 1));
-		$this->cli->out('opts : '.print_r($this->opts, 1));
-		$this->cli->out('flags : '.print_r($this->flags, 1));
+		if ($this->getFlag('debug'))
+		{
+			$this->cli->backgroundYellow()->black()->out($str);
+		}
 	}
 }
