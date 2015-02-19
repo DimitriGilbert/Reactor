@@ -208,7 +208,7 @@ class Command
 								$line .= ' [';
 							}
 
-							$line .= '--'.$key.'='.isset($opt['default'])?$opt['default']:''.':'.$opt['type'];
+							$line .= '--'.$key./*'='.isset($opt['default'])?$opt['default']:''.*/':'.$opt['type'];
 
 							if (isset($opt['required']) and $opt['required'] === true)
 							{
