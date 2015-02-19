@@ -30,13 +30,7 @@ class Command
 
 		$this->command = null;
 		$this->commands = array(
-			'__DEFAULT__'=>'__help',
-			'execute'=>array(
-				'expecting'=>null,
-			),
-			'callback'=>array(
-				'expecting'=>null,
-			)
+			'__DEFAULT__'=>'__help'
 		);
 
 		$this->cli = new \League\CLImate\CLImate;
@@ -262,7 +256,12 @@ class Command
 
 	public function __verbose($str)
 	{
-		if ($this->getFlag('v') or $this->getFlag('verbose') or $this->getFlag('vv'))
+		if (
+			$this->getFlag('v')
+			or $this->getFlag('verbose')
+			or $this->getFlag('vv')
+			or $this->getFlag('debug')
+		)
 		{
 			$this->cli->out($str);
 		}
@@ -270,7 +269,7 @@ class Command
 
 	public function __verbose2($str)
 	{
-		if ($this->getFlag('vv'))
+		if ($this->getFlag('vv') or $this->getFlag('debug'))
 		{
 			$this->cli->out($str);
 		}
