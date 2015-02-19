@@ -54,7 +54,7 @@ class Reactor
 		$class = $this->getClass();
 		if ($class === false)
 		{
-			throw new Exception("Unknown Class : ".$this->_command, 1);
+			throw new \Exception("Unknown Class : ".$this->_command, 1);
 			
 		}
 		$this->command = new $class($this->args, $this->opts, $this->flags);
