@@ -230,7 +230,7 @@ class Command
 	{
 		if ($this->getFlag('v') or $this->getFlag('verbose') or $this->getFlag('vv'))
 		{
-			$this->cli->out($str),
+			$this->cli->out($str);
 		}
 	}
 
@@ -238,7 +238,7 @@ class Command
 	{
 		if ($this->getFlag('vv'))
 		{
-			$this->cli->out($str),
+			$this->cli->out($str);
 		}
 	}
 
