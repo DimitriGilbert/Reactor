@@ -38,7 +38,30 @@ class Command
 		{
 			return $this->args[$index];
 		}
+		elseif ($this->getFlag('i'))
+		{
+			$prompt = $this->cli->input('Argument '.$index.' needed');
+			$prompt = $prompt->prompt();
+			$this->args[$index] = $prompt;
+			return $prompt;
+		}
 		return $default;
+	}
+
+	public function setArg($index, $value)
+	{
+		if (count($this->args) > $index)
+		{
+			$this->args[$index] = $value;
+			return true;
+		}
+		return false;
+	}
+
+	public function setArgs($values)
+	{
+		$this->args[] = $values;
+		return true;
 	}
 
 	public function getOpt($index, $default = null)
@@ -47,7 +70,26 @@ class Command
 		{
 			return $this->opts[$index];
 		}
+		elseif ($this->getFlag('i'))
+		{
+			$prompt = $this->cli->input('Option '.$index.' needed');
+			$prompt = $prompt->prompt();
+			$this->opts[$index] = $prompt;
+			return $prompt;
+		}
 		return $default;
+	}
+
+	public function setOpt($index, $value)
+	{
+		$this->opts[$index] = $value;
+		return true;
+	}
+
+	public function setOpts($values)
+	{
+		$this->opts[] = $values;
+		return true;
 	}
 
 	public function getFlag($index, $default = false)
@@ -57,6 +99,17 @@ class Command
 			return true;
 		}
 		return $default;
+	}
+
+	public function setFlag($index, $value = true)
+	{
+		$this->flags[$index] = true;
+		if (!$value)
+		{
+			unset($this->flags[$index]);
+		}
+		
+		return true;
 	}
 
 	public function hasExpected($function)
@@ -155,7 +208,7 @@ class Command
 								$line .= ' [';
 							}
 
-							$line .= '--'.$key.'='.$opt['default'].':'.$opt['type'];
+							$line .= '--'.$key.'='.isset($opt['default'])?$opt['default']:''.':'.$opt['type'];
 
 							if (isset($opt['required']) and $opt['required'] === true)
 							{
@@ -170,6 +223,22 @@ class Command
 				}
 				$this->cli->out($line);
 			}
+		}
+	}
+
+	public function __verbose($str)
+	{
+		if ($this->getFlag('v') or $this->getFlag('verbose') or $this->getFlag('vv'))
+		{
+			$this->cli->out($str),
+		}
+	}
+
+	public function __verbose2($str)
+	{
+		if ($this->getFlag('vv'))
+		{
+			$this->cli->out($str),
 		}
 	}
 
