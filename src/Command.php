@@ -11,13 +11,23 @@ class Command
 	protected $opts = array();
 	protected $flags = array();
 	protected $commands = array();
+	protected $command = null;
 	public $cli = null;
 	
 	function __construct($args, $opts, $flags)
 	{
 		$this->args = $args;
+		$this->__debug('args :
+	'.print_r($args, 1));
+
 		$this->opts = $opts;
+		$this->__debug('opts :
+	'.print_r($opts, 1));
+
 		$this->flags = $flags;
+		$this->__debug('flags :
+	'.print_r($flags, 1));
+
 		$this->command = null;
 		$this->commands = array(
 			'__DEFAULT__'=>'__help',
@@ -40,7 +50,18 @@ class Command
 		}
 		elseif ($this->getFlag('i'))
 		{
-			$prompt = $this->cli->input('Argument '.$index.' needed');
+			$str = 'Argument '.$index.' needed :
+';
+			if (
+				isset($this->commands[$this->command])
+				and isset($this->commands[$this->command]['expecting']['args'])
+				and isset($this->commands[$this->command]['expecting']['args'][$index])
+			)
+			{
+				$srt = 'Argument '.$this->commands[$this->command]['expecting']['args'][$index]['name'].' needed :
+';
+			}
+			$prompt = $this->cli->input($str);
 			$prompt = $prompt->prompt();
 			$this->args[$index] = $prompt;
 			return $prompt;
@@ -72,7 +93,8 @@ class Command
 		}
 		elseif ($this->getFlag('i'))
 		{
-			$prompt = $this->cli->input('Option '.$index.' needed');
+			$prompt = $this->cli->input('Option '.$index.' needed :
+');
 			$prompt = $prompt->prompt();
 			$this->opts[$index] = $prompt;
 			return $prompt;
@@ -176,11 +198,13 @@ class Command
 						{
 							if (isset($arg['required']) and $arg['required'] === true)
 							{
-								$line .= ' <';
+								$line .= '
+	<';
 							}
 							else
 							{
-								$line .= ' [';
+								$line .= '
+	[';
 							}
 
 							$line .= $arg['name'].':'.$arg['type'];
@@ -201,11 +225,13 @@ class Command
 						{
 							if (isset($opt['required']) and $opt['required'] === true)
 							{
-								$line .= ' <';
+								$line .= '
+	<';
 							}
 							else
 							{
-								$line .= ' [';
+								$line .= '
+	[';
 							}
 
 							$line .= '--'.$key./*'='.isset($opt['default'])?$opt['default']:''.*/':'.$opt['type'];
@@ -226,6 +252,14 @@ class Command
 		}
 	}
 
+	public function __out($str)
+	{
+		if (!$this->getFlag('q'))
+		{
+			$this->cli->out($str);
+		}
+	}
+
 	public function __verbose($str)
 	{
 		if ($this->getFlag('v') or $this->getFlag('verbose') or $this->getFlag('vv'))
@@ -239,6 +273,14 @@ class Command
 		if ($this->getFlag('vv'))
 		{
 			$this->cli->out($str);
+		}
+	}
+
+	public function __debug($str)
+	{
+		if ($this->getFlag('debug'))
+		{
+			$this->cli->backgroundYellow()->black()->out($str);
 		}
 	}
 
