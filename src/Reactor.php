@@ -11,10 +11,22 @@ class Reactor
 	protected $flags = array();
 	protected $command = null;
 	protected $callback = null;
+	protected $config = null;
 	public $_command = null;
 	
 	function __construct($argv)
 	{
+		if (!is_file(APPPATH.'reactor.json'))
+		{
+			file_put_contents(APPPATH.'reactor.json', json_encode(array(
+				'namespaces'=>array(
+					'D2G\\Reactor\\',
+					'D2G\\Reactor\\Commands\\'
+				)
+			)));
+		}
+
+		$this->config = json_decode(file_get_contents(APPPATH.'reactor.json'), 1);
 		$_command = preg_split('#\:#', $argv[1]);
 
 		if (count($_command) > 1)
@@ -29,7 +41,7 @@ class Reactor
 
 		foreach ($argv as $arg)
 		{
-			if (preg_match('#--#', $arg))
+			if (preg_match('#^--#', $arg))
 			{
 				$arg = preg_replace('#--#', '', $arg);
 				$arg = preg_split('#=#', $arg);
@@ -40,7 +52,7 @@ class Reactor
 					$this->opts[$arg[0]] = $arg[1];
 				}
 			}
-			elseif (preg_match('#-#', $arg))
+			elseif (preg_match('#^-#', $arg))
 			{
 				$arg = preg_replace('#-#', '', $arg);
 				$this->flags[$arg] = true;
@@ -64,22 +76,21 @@ class Reactor
 
 	public function getClass()
 	{
-		if (class_exists('D2G\\Reactor\\'.$this->_command))
+		$class = false;
+		if (isset($this->config['namespaces']))
 		{
-			$class = 'D2G\\Reactor\\'.$this->_command;
+			foreach ($this->config['namespaces'] as $namespace)
+			{
+				if (class_exists($namespace.$this->_command))
+				{
+					$class = $namespace.$this->_command;
+				}
+			}
 		}
-		elseif (class_exists('D2G\\Reactor\\Commands\\'.$this->_command))
-		{
-			$class = 'D2G\\Reactor\\Commands\\'.$this->_command;
-		}
-		elseif (class_exists($this->_command))
+		
+		if ($class === false and class_exists($this->_command))
 		{
 			$class = $this->_command;
-		}
-		else
-		{
-			// die($this->_command);
-			return false;
 		}
 
 		return $class;

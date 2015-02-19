@@ -15,9 +15,7 @@ class Demo extends \D2G\Reactor\Command
 	
 	function __construct($args, $opts, $flags)
 	{
-		$this->args = $args;
-		$this->opts = $opts;
-		$this->flags = $flags;
+		parent::__construct($args, $opts, $flags);
 		$this->commands = array(
 			'__DEFAULT__'=>'__help',
 			'create'=>array(
@@ -49,8 +47,6 @@ class Demo extends \D2G\Reactor\Command
 				),
 			)
 		);
-
-		$this->cli = new \League\CLImate\CLImate;
 	}
 
 	public function create()

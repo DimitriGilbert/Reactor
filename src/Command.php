@@ -15,15 +15,23 @@ class Command
 	
 	function __construct($args, $opts, $flags)
 	{
+		$this->cli = new \League\CLImate\CLImate;
+
 		$this->args = $args;
 		$this->opts = $opts;
 		$this->flags = $flags;
+
+		$this->__debug('args :
+	'.print_r($args, 1));
+		$this->__debug('opts :
+	'.print_r($opts, 1));
+		$this->__debug('flags :
+	'.print_r($flags, 1));
+		
 		$this->command = null;
 		$this->commands = array(
 			'__DEFAULT__'=>'__help'
 		);
-
-		$this->cli = new \League\CLImate\CLImate;
 	}
 
 	public function getArg($index, $default = null)
@@ -111,7 +119,17 @@ class Command
 		$checker = $this->commands[$function];
 		if (isset($this->commands[$function]['expecting']['args']))
 		{
-			
+			foreach ($this->commands[$function]['expecting']['args'] as $index => $arg)
+			{
+				if ($this->getFlag('ii'))
+				{
+					$this->getArg($index);
+				}
+				else
+				{
+					return false;
+				}
+			}
 		}
 		if (isset($this->commands[$function]['expecting']['opts']))
 		{
@@ -120,6 +138,18 @@ class Command
 				if (is_null($this->getOpt($k)) and isset($opt['default']))
 				{
 					$this->opts[$k] = $opt['default'];
+				}
+				elseif (
+					$this->getFlag('ii')
+					and is_null($this->getOpt($k))
+					and !isset($opt['default'])
+				)
+				{
+					$this->getOpt($k);
+				}
+				else
+				{
+					return false;
 				}
 			}
 		}
@@ -149,7 +179,14 @@ class Command
 		if (method_exists($this, $function))
 		{
 			$this->command = $function;
-			$this->$function();
+			try 
+			{
+				$this->$function();
+			}
+			catch (Exception $e)
+			{
+				$this->cli->backgroundRed()->white()->dump($e);
+			}
 		}
 	}
 
