@@ -33,9 +33,8 @@ class Reactor
 		{
 			$this->callback = $_command[1];
 		}
-		$_command = $_command[0];
 
-		$this->_command = $_command;
+		$this->_command = $this->getAllias($_command[0]);
 
 		$argv = array_slice($argv, 2);
 
@@ -72,6 +71,27 @@ class Reactor
 		$this->command = new $class($this->args, $this->opts, $this->flags);
 
 		return true;
+	}
+
+	public function getAllias($command)
+	{
+		if (
+			isset($this->config['alliases'])
+			and in_array($command, $this->config['alliases'])
+		)
+		{
+			$data = $this->config['alliases'][$command];
+			$command = $data['command'];
+			if (
+				is_null($this->callback)
+				and isset($data['callback'])
+			)
+			{
+				$this->callback = $data['callback'];
+			}
+		}
+
+		return $command;
 	}
 
 	public function getClass()

@@ -175,6 +175,8 @@ class Command
 			$function = $this->commands['__DEFAULT__'];
 		}
 
+		$this->__debug('executing '.$function);
+
 		if (isset($this->commands[$function]))
 		{
 			if (isset($thic->commands[$function]['alias']))
