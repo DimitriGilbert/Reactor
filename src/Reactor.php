@@ -18,7 +18,7 @@ class Reactor
 	{
 		if (!is_file(APPPATH.'reactor.json'))
 		{
-			file_put_contents(APPPATH.'reactor.json', json_encode(array(
+			file_put_contents(APPPATH.'/reactor.json', json_encode(array(
 				'namespaces'=>array(
 					'D2G\\Reactor\\',
 					'D2G\\Reactor\\Commands\\'
