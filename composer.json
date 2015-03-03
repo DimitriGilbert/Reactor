@@ -1,5 +1,5 @@
 {
-    "name": "D2G/reactor",
+    "name": "d2g/reactor",
     "description": "",
     "require": {
         "php": ">=5.3.3",
