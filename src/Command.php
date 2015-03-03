@@ -188,6 +188,7 @@ class Command
 			{
 				$this->cli->backgroundRed()->white()->out('Missing inputs...');
 				$this->__help();
+				return false;
 			}
 		}
 
