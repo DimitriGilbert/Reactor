@@ -133,17 +133,11 @@ class Command
 		{
 			foreach ($this->commands[$function]['expecting']['args'] as $index => $arg)
 			{
-				if ($this->getFlag('ii') 
-					and isset($arg['required'])
-					and $arg['required']
-				)
+				if ($this->getFlag('ii'))
 				{
 					$this->getArg($index);
 				}
-				elseif (!$this->getFlag('ii') 
-					and isset($arg['required'])
-					and $arg['required']
-				)
+				elseif (isset($arg['required']) and $arg['required'])
 				{
 					return false;
 				}
@@ -157,19 +151,11 @@ class Command
 				{
 					$this->opts[$k] = $opt['default'];
 				}
-				elseif (
-					$this->getFlag('ii')
-					and is_null($this->getOpt($k))
-					and !isset($opt['default'])
-					and (
-						!isset($opt['required'])
-						or !$opt['required']
-					)
-				)
+				elseif ($this->getFlag('ii'))
 				{
 					$this->getOpt($k);
 				}
-				else
+				elseif (isset($opt['required']) and $opt['required'])
 				{
 					return false;
 				}
