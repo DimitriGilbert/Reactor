@@ -133,7 +133,11 @@ class Command
 		{
 			foreach ($this->commands[$function]['expecting']['args'] as $index => $arg)
 			{
-				if ($this->getFlag('ii'))
+				if (
+					$this->getFlag('ii')
+					and isset($opt['required'])
+					and $opt['required']
+				)
 				{
 					$this->getArg($index);
 				}
