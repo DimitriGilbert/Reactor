@@ -186,7 +186,8 @@ class Command
 
 			if (!$this->hasExpected($function))
 			{
-				// TODO
+				$this->cli->backgroundRed()->white()->out('Missing inputs...');
+				$this->__help();
 			}
 		}
 
