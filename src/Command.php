@@ -155,6 +155,10 @@ class Command
 					$this->getFlag('ii')
 					and is_null($this->getOpt($k))
 					and !isset($opt['default'])
+					and (
+						!isset($opt['required'])
+						or !$opt['required']
+					)
 				)
 				{
 					$this->getOpt($k);
