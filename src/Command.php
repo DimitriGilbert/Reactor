@@ -151,11 +151,11 @@ class Command
 				{
 					$this->opts[$k] = $opt['default'];
 				}
-				elseif ($this->getFlag('ii'))
+				elseif (is_null($this->getOpt($k)) and $this->getFlag('ii'))
 				{
 					$this->getOpt($k);
 				}
-				elseif (isset($opt['required']) and $opt['required'])
+				elseif (is_null($this->getOpt($k)) and isset($opt['required']) and $opt['required'])
 				{
 					return false;
 				}
