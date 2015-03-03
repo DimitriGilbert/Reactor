@@ -16,7 +16,7 @@ class Reactor
 	
 	function __construct($argv)
 	{
-		if (!is_file(APPPATH.'reactor.json'))
+		if (!is_file(APPPATH.'/reactor.json'))
 		{
 			file_put_contents(APPPATH.'/reactor.json', json_encode(array(
 				'namespaces'=>array(
