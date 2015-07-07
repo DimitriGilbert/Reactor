@@ -27,6 +27,12 @@ class Reactor
 		}
 
 		$this->config = json_decode(file_get_contents(APPPATH.'/reactor.json'), 1);
+
+		if (!isset($argv[1]) or $argv[1] === '')
+		{
+			$argv[1] = 'Command';
+		}
+		
 		$_command = preg_split('#\:#', $argv[1]);
 
 		if (count($_command) > 1)
