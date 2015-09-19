@@ -50,11 +50,30 @@ class Reactor
 			{
 				$arg = preg_replace('#--#', '', $arg);
 				$arg = preg_split('#=#', $arg);
-				$this->opts[$arg[0]] = true;
-
-				if (count($arg) > 1)
+				if (!isset($this->opts[$arg[0]]))
 				{
-					$this->opts[$arg[0]] = $arg[1];
+					$this->opts[$arg[0]] = true;
+
+					if (count($arg) > 1)
+					{
+						$this->opts[$arg[0]] = $arg[1];
+					}
+				}
+				else
+				{
+					if (!is_array($this->opts[$arg[0]]))
+					{
+						$this->opts[$arg[0]] = array($this->opts[$arg[0]]);
+					}
+
+					if (count($arg) > 1)
+					{
+						$this->opts[$arg[0]][] = $arg[1];
+					}
+					else
+					{
+						$this->opts[$arg[0]][] = true;
+					}
 				}
 			}
 			elseif (preg_match('#^-#', $arg))

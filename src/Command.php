@@ -96,7 +96,17 @@ class Command
 
 	public function setOpt($index, $value)
 	{
-		$this->opts[$index] = $value;
+		if (isset($this->opts[$index]))
+		{
+			if (!is_array($this->opts[$index]))
+			{
+				$this->opts[$index] = array($this->opts[$index]);
+			}
+		}
+		else
+		{
+			$this->opts[$index] = $value;
+		}
 		return true;
 	}
 
