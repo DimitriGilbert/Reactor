@@ -291,6 +291,19 @@ class Command
 		}
 	}
 
+	public function __error($str)
+	{
+		$this->cli->backgroundRed($str);
+	}
+
+	/**
+	 *
+	 */
+	public function __success($str)
+	{
+		$this->cli->green($str);
+	}
+
 	public function __verbose($str)
 	{
 		if (
