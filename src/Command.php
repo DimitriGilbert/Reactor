@@ -304,6 +304,22 @@ class Command
 		$this->cli->green($str);
 	}
 
+	/**
+	 *
+	 */
+	public function __notice($str)
+	{
+		$this->cli->blue($str);
+	}
+
+	/**
+	 *
+	 */
+	public function __warning($str)
+	{
+		$this->cli->backgroundLightYellow($str);
+	}
+
 	public function __verbose($str)
 	{
 		if (
