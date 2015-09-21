@@ -61,6 +61,14 @@ class Command
 		return $default;
 	}
 
+	/**
+	 *
+	 */
+	public function getArgs()
+	{
+		return $this->args;
+	}
+
 	public function setArg($index, $value)
 	{
 		if (count($this->args) > $index)
@@ -94,6 +102,14 @@ class Command
 		return $default;
 	}
 
+	/**
+	 *
+	 */
+	public function getopts()
+	{
+		return $this->opts;
+	}
+
 	public function setOpt($index, $value)
 	{
 		if (isset($this->opts[$index]))
@@ -123,6 +139,14 @@ class Command
 			return true;
 		}
 		return $default;
+	}
+
+	/**
+	 *
+	 */
+	public function getFlags()
+	{
+		return $this->flags;
 	}
 
 	public function setFlag($index, $value = true)
