@@ -40,6 +40,12 @@ class Reactor
 			$this->callback = $_command[1];
 		}
 
+		if (preg_match('#\/#', $_command[0]))
+		{
+			$_command[0] = preg_replace('#\/\/#', '/Commands/', $_command[0]);
+			$_command[0] = preg_replace('#\/#', '\\', $_command[0]);
+		}
+
 		$this->_command = $this->getAllias($_command[0]);
 
 		$argv = array_slice($argv, 2);
@@ -122,7 +128,11 @@ class Reactor
 	public function getClass()
 	{
 		$class = false;
-		if (isset($this->config['namespaces']))
+		if (class_exists($this->_command))
+		{
+			$class = $this->_command;
+		}
+		elseif (isset($this->config['namespaces']))
 		{
 			foreach ($this->config['namespaces'] as $namespace)
 			{
@@ -131,11 +141,6 @@ class Reactor
 					$class = $namespace.$this->_command;
 				}
 			}
-		}
-		
-		if ($class === false and class_exists($this->_command))
-		{
-			$class = $this->_command;
 		}
 
 		return $class;
