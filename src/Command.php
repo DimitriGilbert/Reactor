@@ -302,7 +302,7 @@ class Command
 						}
 					}
 				}
-				$this->cli->out($line);
+				$this->cli->green($line);
 			}
 		}
 	}
