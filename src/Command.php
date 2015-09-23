@@ -341,7 +341,7 @@ class Command
 	 */
 	public function __warning($str)
 	{
-		$this->cli->backgroundLightYellow($str);
+		$this->cli->backgroundYellow()->black($str);
 	}
 
 	public function __verbose($str)
