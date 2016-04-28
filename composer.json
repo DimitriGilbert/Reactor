@@ -2,12 +2,13 @@
     "name": "d2g/reactor",
     "description": "",
     "require": {
-        "php": ">=5.3.3",
-        "league/climate": "~2.6"
+        "php": ">=5.4",
+        "league/climate": "^3.2"
     },
     "autoload": {
         "psr-4": {
             "D2G\\Reactor\\": "src/"
         }
-    }
+    },
+    "bin":["bin/reactor"]
 }
