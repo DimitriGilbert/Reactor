@@ -20,13 +20,52 @@ class Reactor extends \D2G\Reactor\Command
         $this->flags = $flags;
         $this->commands = array(
             '__DEFAULT__'=>'__help',
-            'register'=>array(
+            'create_bin'=>array(
+                'description'=>'create a bin script for composer bin directory',
                 'expecting'=>array(
                     'args'=>array(
                         array(
-                            'name'=>'namespace',
+                            'name'=>'name',
+                            'description'=>'name of the bin',
                             'type'=>'string',
                             'required'=>true
+                        ),
+                        array(
+                            'name'=>'class',
+                            'description'=>'command class of the bin, namespace separated with /',
+                            'type'=>'string',
+                            'required'=>true
+                        ),
+                        array(
+                            'name'=>'output directory',
+                            'description'=>'output directory of the bin script',
+                            'type'=>'string',
+                            'required'=>false
+                        )
+                    )
+                ),
+            ),
+            'create_command'=>array(
+                'description'=>'create a command class',
+                'expecting'=>array(
+                    'args'=>array(
+                        array(
+                            'name'=>'class',
+                            'description'=>'name of the command',
+                            'type'=>'string',
+                            'required'=>true
+                        ),
+                        array(
+                            'name'=>'namespace',
+                            'description'=>'namespace for the command class, separated with /',
+                            'type'=>'string',
+                            'required'=>true
+                        ),
+                        array(
+                            'name'=>'output directory',
+                            'description'=>'output directory of the command class',
+                            'type'=>'string',
+                            'required'=>false
                         )
                     )
                 ),
@@ -36,19 +75,39 @@ class Reactor extends \D2G\Reactor\Command
         $this->cli = new \League\CLImate\CLImate;
     }
 
-    public function register()
+    public function create_bin()
     {
-        $x = 0;
-        $config = json_decode(file_get_contents(APPPATH.'reactor.json'), 1);
-        while ($this->getArg($x, false))
-        {
-            if (!in_array($this->getArg($x), $config['namespaces']))
-            {
-                $config['namespaces'][] = $this->getArg($x);
-            }
-            $x++;
+        $class = preg_replace('#/#', '\\', $this->getArg(1));
+        $tpl = file_get_contents(__DIR__.'/../../tpl/bin');
+
+        $binStr = preg_replace('#\<classname\>#', $class, $tpl);
+        if (!is_null($this->getArg(2))
+            and is_dir($this->getArg(2)) 
+            and is_writable($this->getArg(2))
+        ) {
+            file_put_contents($this->getArg(2).'/'.$this->getArg(0), $binStr);
         }
 
-        file_put_contents(APPPATH.'reactor.json', json_encode($config));
+        $this->__out($binStr);
+        return 0;
+    }
+
+    public function create_command()
+    {
+        $class = $this->getArg(0);
+        $namespace = preg_replace('#/#', '\\', $this->getArg(1));
+        $tpl = file_get_contents(__DIR__.'/../../tpl/Command');
+
+        $cmdStr = preg_replace('#\<classname\>#', $class, $tpl);
+        $cmdStr = preg_replace('#\<namespace\>#', $namespace, $cmdStr);
+        if (!is_null($this->getArg(2))
+            and is_dir($this->getArg(2)) 
+            and is_writable($this->getArg(2))
+        ) {
+            file_put_contents($this->getArg(2).'/'.$this->getArg(0).'.php', $cmdStr);
+        }
+
+        $this->__out($cmdStr);
+        return 0;
     }
 }

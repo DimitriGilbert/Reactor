@@ -280,51 +280,46 @@ class Command
      */
     public function __help()
     {
-        $this->cli->out($this->name);
-        $this->cli->out('Usage');
+        $this->__out($this->name);
+        $this->__out('Usage');
         foreach ($this->commands as $command => $data) {
             if ($command !== '__DEFAULT__') {
-                $line = ':'.$command;
+                $this->__out("\n:".$command);
+                $line = '';
+                if (isset($data['description'])) {
+                    $this->__out($data['description']);
+                }
                 if (isset($data['expecting']) and !is_null($data['expecting'])) {
-                    if (isset($data['expecting']['args'])) {
+                    $bol = "\n\t<";
+                    $eol = '>';
+                    if (isset($arg['required']) and $arg['required'] === true) {
+                        $bol = "\n\t[";
+                        $eol = ']';
+                    }
+                    if (isset($data['expecting']['args']) and !empty($data['expecting']['args'])) {
+                        $line .= "arguments : \n";
                         foreach ($data['expecting']['args'] as $arg) {
-                            if (isset($arg['required']) and $arg['required'] === true) {
-                                $line .= '
-    <';
-                            }
-                            else {
-                                $line .= '
-    [';
-                            }
-
-                            $line .= $arg['name'].':'.$arg['type'];
-
-                            if (isset($arg['required']) and $arg['required'] === true) {
-                                $line .= '>';
-                            }
-                            else {
-                                $line .= ']';
+                            $line .= $bol.$arg['name'].':'.$arg['type'].$eol;
+                            if (isset($arg['description'])) {
+                                $line .= "\t".$arg['description'];
                             }
                         }
                     }
-                    if (isset($data['expecting']['opts'])) {
+                    if (isset($data['expecting']['opts']) and !empty($data['expecting']['opts'])) {
+                        $line .= "options : \n";
                         foreach ($data['expecting']['opts'] as $key => $opt) {
-                            if (isset($opt['required']) and $opt['required'] === true) {
-                                $line .= '
-    <';
+                            $line .=  $bol.'--'.$key.':'.$opt['type'].$eol;
+                            if (isset($opt['description'])) {
+                                $line .= "\t".$opt['description'];
                             }
-                            else {
-                                $line .= '
-    [';
-                            }
-
-                            $line .= '--'.$key./*'='.isset($opt['default'])?$opt['default']:''.*/':'.$opt['type'];
-
-                            if (isset($opt['required']) and $opt['required'] === true) {
-                                $line .= '>';
-                            }
-                            else {
-                                $line .= ']';
+                        }
+                    }
+                    if (isset($data['expecting']['flags']) and !empty($data['expecting']['flags'])) {
+                        $line .= "flags : \n";
+                        foreach ($data['expecting']['flags'] as $arg) {
+                            $line .= $bol.$arg.$eol;
+                            if (isset($arg['description'])) {
+                                $line .= "\t".$arg['description'];
                             }
                         }
                     }

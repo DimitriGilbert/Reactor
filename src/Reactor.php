@@ -12,45 +12,51 @@ class Reactor
     protected $command = null;
     protected $callback = null;
     protected $config = array();
-    public $_command = null;
+    public $command_ = null;
     
     /**
      * constructor
      * @param array $argv command line input array
+     * @param string $command default command class
+     * @param string $callback default method from command class
      */
-    function __construct($argv)
+    function __construct(array $argv, $command = null, $callback = null)
     {
-        // if (!is_file(APPPATH.'/reactor.json'))
-        // {
-        //  file_put_contents(APPPATH.'/reactor.json', json_encode(array(
-        //      'namespaces'=>array(
-        //          'D2G\\Reactor\\',
-        //          'D2G\\Reactor\\Commands\\'
-        //      )
-        //  )));
-        // }
-        if (is_file(APPPATH.'/reactor.json')) {
-            $this->config = json_decode(file_get_contents(APPPATH.'/reactor.json'), 1);
-        }
+        if (is_null($command)) {
+            if (is_file(APPPATH.'/reactor.json')) {
+                $this->config = json_decode(file_get_contents(APPPATH.'/reactor.json'), 1);
+            }
 
-        if (!isset($argv[1]) or $argv[1] === '') {
-            $argv[1] = 'Command';
+            if (!isset($argv[1]) or $argv[1] === '') {
+                $argv[1] = 'Command';
+            }
+            
+            $command_ = preg_split('#\:#', $argv[1]);
+
+            if (preg_match('#\/#', $command_[0])) {
+                $command_[0] = preg_replace('#\/\/#', '/Commands/', $command_[0]);
+                $command_[0] = preg_replace('#\/#', '\\', $command_[0]);
+            }
+        }
+        else {
+            $command_ = array($command, $argv[1]);
         }
         
-        $_command = preg_split('#\:#', $argv[1]);
-
-        if (count($_command) > 1) {
-            $this->callback = $_command[1];
+        if (!is_null($callback)) {
+            $this->callback = $callback;
+        }
+        elseif (count($command_) > 1) {
+            $this->callback = $command_[1];
         }
 
-        if (preg_match('#\/#', $_command[0])) {
-            $_command[0] = preg_replace('#\/\/#', '/Commands/', $_command[0]);
-            $_command[0] = preg_replace('#\/#', '\\', $_command[0]);
+        $sliceFrom = 2;
+        if (!is_null($command) and !is_null($callback)) {
+            $sliceFrom = 1;
         }
 
-        $this->_command = $this->getAllias($_command[0]);
+        $this->command_ = $this->getAllias($command_[0]);
 
-        $argv = array_slice($argv, 2);
+        $argv = array_slice($argv, $sliceFrom);
 
         // parse given cli arg
         foreach ($argv as $arg) {
@@ -91,7 +97,7 @@ class Reactor
 
         $class = $this->getClass();
         if ($class === false) {
-            throw new \Exception("Unknown Class : ".$this->_command, 1);
+            throw new \Exception("Unknown Class : ".$this->command_, 1);
             
         }
         $this->command = new $class($this->args, $this->opts, $this->flags);
@@ -130,13 +136,13 @@ class Reactor
     public function getClass()
     {
         $class = false;
-        if (class_exists($this->_command)) {
-            $class = $this->_command;
+        if (class_exists($this->command_)) {
+            $class = $this->command_;
         }
         elseif (isset($this->config['namespaces'])) {
             foreach ($this->config['namespaces'] as $namespace) {
-                if (class_exists($namespace.$this->_command)) {
-                    $class = $namespace.$this->_command;
+                if (class_exists($namespace.$this->command_)) {
+                    $class = $namespace.$this->command_;
                 }
             }
         }
@@ -150,9 +156,14 @@ class Reactor
      */
     public function ignite()
     {
-        if (!is_null($this->command)) {
+        try {
+            if (is_null($this->command)) {
+                throw new \Exception("this command is unknown : ".$this->command_.'::'.$this->callback, 1);
+            }
             return $this->command->__execute($this->callback);
         }
-        echo 'Unknown command';
+        catch(\Exception $e) {
+            die($e->getMessage());
+        }
     }
 }
