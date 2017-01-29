@@ -1,0 +1,20 @@
+<?php
+namespace <namespace>;
+
+/**
+* 
+*/
+class <classname> extends \D2G\Reactor\Command
+{
+    protected $name = '';
+    protected $args = array();
+    protected $opts = array();
+    protected $flags = array();
+    protected $commands = array();
+    public $cli = null;
+    
+    function __construct($args, $opts, $flags)
+    {
+        parent::__construct($args, $opts, $flags);
+    }
+}
